@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countdown</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #090909;
+    color: #e8e8e8;
+    font-family: Georgia, "Times New Roman", serif;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .countdown {
+    text-align: center;
+    letter-spacing: .08em;
+  }
+  .numbers {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: clamp(8px, 2vw, 20px);
+    font-family: "Courier New", monospace;
+    font-size: clamp(2rem, 7vw, 5.5rem);
+    line-height: 1;
+  }
+  .unit { white-space: nowrap; }
+  .separator { opacity: .45; }
+  .labels {
+    display: flex;
+    justify-content: center;
+    gap: clamp(28px, 8vw, 80px);
+    margin-top: 12px;
+    font: 10px/1 "Courier New", monospace;
+    letter-spacing: .2em;
+    color: #777;
+  }
+  #ended { display: none; font-size: clamp(2rem, 7vw, 5rem); }
+  @media (max-width: 520px) {
+    .numbers { gap: 5px; }
+    .labels { gap: 18px; font-size: 8px; }
+  }
+</style>
+</head>
+<body>
+  <main class="countdown" aria-live="polite">
+    <div id="timer" class="numbers">
+      <span id="days" class="unit">000</span><span class="separator">:</span>
+      <span id="hours" class="unit">00</span><span class="separator">:</span>
+      <span id="minutes" class="unit">00</span><span class="separator">:</span>
+      <span id="seconds" class="unit">00</span>
+    </div>
+    <div id="labels" class="labels">
+      <span>DAYS</span><span>HOURS</span><span>MINUTES</span><span>SECONDS</span>
+    </div>
+    <div id="ended">00 : 00 : 00 : 00</div>
+  </main>
+
+<script>
+  // December 19, 2026 at 11:00 AM Pacific Time.
+  // December is PST (UTC-8), so this is 19:00 UTC.
+  const target = Date.parse("2026-12-19T19:00:00Z");
+
+  const $ = id => document.getElementById(id);
+
+  function pad(n, length) {
+    return String(n).padStart(length, "0");
+  }
+
+  function update() {
+    const remaining = target - Date.now();
+
+    if (remaining <= 0) {
+      $("timer").style.display = "none";
+      $("labels").style.display = "none";
+      $("ended").style.display = "block";
+      return;
+    }
+
+    const totalSeconds = Math.floor(remaining / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    $("days").textContent = pad(days, 3);
+    $("hours").textContent = pad(hours, 2);
+    $("minutes").textContent = pad(minutes, 2);
+    $("seconds").textContent = pad(seconds, 2);
+  }
+
+  update();
+  setInterval(update, 250);
+</script>
+</body>
+</html>
